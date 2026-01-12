@@ -1,4 +1,4 @@
-# grievance_api.py
+
 from fastapi import APIRouter, Depends
 from typing import List
 from sqlalchemy.orm import Session
@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
-# ---------- DB Dependency ----------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -16,14 +16,13 @@ def get_db():
     finally:
         db.close()
 
-# ---------- Pydantic model for input ----------
 class GrievanceCreate(BaseModel):
     transcript: str
     audio_url: str = ""
     latitude: float
     longitude: float
 
-# ---------- Rule Sets ----------
+
 CATEGORY_RULES = {
     "Water": ["water", "tap", "pipeline"],
     "Electricity": ["power", "electricity", "light"],
@@ -34,7 +33,7 @@ CATEGORY_RULES = {
 HIGH_SEVERITY_WORDS = ["no water", "danger", "emergency", "accident", "for days"]
 MEDIUM_SEVERITY_WORDS = ["delay", "not working", "problem"]
 
-# ---------- Helper Functions ----------
+
 def classify_category(text: str):
     text = text.lower()
     for category, keywords in CATEGORY_RULES.items():
@@ -54,7 +53,7 @@ def detect_severity(text: str):
         return "MEDIUM"
     return "LOW"
 
-# ---------- POST /grievance/create (bulk version) ----------
+
 @router.post("/grievance/create")
 def create_grievances(
     grievances: List[GrievanceCreate],  # Accept list of grievances
